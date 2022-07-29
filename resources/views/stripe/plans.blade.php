@@ -165,12 +165,12 @@
 
 
 <div class="container-fluid">
-    <div class="container">
+    <div class="container mt-5">
       <div class="row">
 
         <div class="col-sm-4">
             @if ($basic)
-          <div class="card text-center">
+          <div class="card text-center mt-5">
 
             <div class="title">
               <i class="fa fa-paper-plane" aria-hidden="true"></i>
@@ -193,7 +193,7 @@
         </div>
         @if ($professional)
         <div class="col-sm-4">
-            <div class="card text-center">
+            <div class="card text-center  mt-5">
               <div class="title">
                 <i class="fa fa-plane" aria-hidden="true"></i>
                 <h2>{{$professional->name}}</h2>
@@ -215,7 +215,7 @@
         @endif
         @if ($enterprise)
           <div class="col-sm-4">
-            <div class="card text-center">
+            <div class="card text-center  mt-5">
               <div class="title">
                 <i class="fa fa-rocket" aria-hidden="true"></i>
                 <h2>{{$enterprise->name}}</h2>
