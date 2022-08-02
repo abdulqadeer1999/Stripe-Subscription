@@ -38,3 +38,5 @@ Route::get('subscriptions/resume', [SubscriptionController::class, 'resumeSubscr
 Route::get('update-plan',[SubscriptionController::class,'upgrade'])->name('update-plan');
 
 Route::get('upgrade-plan',[SubscriptionController::class,'updateplan'])->name('upgrade-plan');
+
+Route::stripeWebhooks('plans/checkout/{planId}');
