@@ -96,10 +96,10 @@ input:checked + .slider:before {
                         <thead>
                           <tr>
                             <th scope="col">Plan Name</th>
-                            <th scope="col">Subs Name</th>
+                            {{-- <th scope="col">Subs Name</th> --}}
                             <th scope="col">Price</th>
                             <th scope="col">Quantity</th>
-                            <th scope="col">Trial Start At</th>
+                            <th scope="col">Subscription Start At</th>
                             <th>Auto Renew</th>
                           </tr>
                         </thead>
@@ -107,14 +107,14 @@ input:checked + .slider:before {
                             @foreach ($subscriptions as $subscription)
                                 <tr>
                                     <td>{{ $subscription->plan->name }}</td>
-                                    <td>{{ $subscription->name }}</td>
+                                    {{-- <td>{{ $subscription->name }}</td> --}}
                                     <td>{{ $subscription->plan->price }}</td>
                                     <td>{{ $subscription->quantity }}</td>
                                     <td>{{ $subscription->created_at }}</td>
                                     <td>
                                         <label class="switch">
                                             @if ($subscription->ends_at == null)
-                                                <input type="checkbox" id="switcher" checked value="{{ $subscription->name }}">
+                                                <input type="checkbox" id="switcher"  checked value="{{ $subscription->name }}">
                                             @else
                                                 <input type="checkbox" id="switcher" value="{{ $subscription->name }}">
                                             @endif
@@ -129,8 +129,6 @@ input:checked + .slider:before {
                     @else
                     <h4>You are not subscribed to any plan</h4>
                     @endif
-
-
                 </div>
             </div>
         </div>
@@ -144,14 +142,16 @@ input:checked + .slider:before {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#switcher').click(function() {
+        $('#switcher').on('click',function() {
+            // alert('test');
             var subscriptionName = $('#switcher').val();
+            // alert(subscriptionName);
             if($(this).is(':checked')){
                 $.ajax({
                     url:'{{ route("subscriptions.resume") }}',
                     data: { subscriptionName },
                     type:"GET",
-                    // success:function( response )
+                    success:function( response )
                     {
                         Swal.fire(
                             'Subscription!',

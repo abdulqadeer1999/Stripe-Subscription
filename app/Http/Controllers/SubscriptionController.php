@@ -7,7 +7,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Laravel\Cashier\Subscription;
 use Stripe\Plan;
-
+use App\Models\User;
 class SubscriptionController extends Controller
 {
     public function showPlanForm()
@@ -110,6 +110,8 @@ class SubscriptionController extends Controller
         if($subscriptionName){
             $user = auth()->user();
             $user->subscription($subscriptionName)->cancel();
+            // $invoice = $user->invoices()[0];
+            // $user->refund($invoice->charge);
             return back()->with('cancel','Your Subscription has been Cancelled Successfully');
         }
     }
@@ -122,4 +124,19 @@ class SubscriptionController extends Controller
             return back()->with('resume','Your Subscription has been Resumed Successfully');
         }
     }
+
+    public function upgrade(){
+        $basic = ModelsPlan::where('name', 'basic')->first();
+        $professional = ModelsPlan::where('name', 'gold')->first();
+        $enterprise = ModelsPlan::where('name', 'premium')->first();
+        return view('stripe.updateplan',compact('basic','professional','enterprise'));
+    }
+
+        // public function updateplan(Request $request){
+
+        //     $user = auth()->user();
+        //     $sub =  $user->subscription('default')->swap('plan_M9JGmfXUu8R1f9');
+        //     return $sub;
+
+        // }
 }

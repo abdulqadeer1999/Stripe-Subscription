@@ -41,19 +41,16 @@
                             {{ session('alert-success') }}
                         </div>
                     @endif
-
-
                     <form action="{{ route('plan.process') }}" method="POST" id="subscribe-form">
                         @csrf
                         <span><b>Your Subscription is </b> {{ strtoupper($plan->name) }}</span> <span style="float: right"> ${{ $plan->price/100 }}</span> <br>
-
                         <input type="hidden" name="plan_id" value="{{ $plan->plan_id }}">
                         <label for="card-holder-name">Card Holder Name</label> <br>
                         <input id="card-holder-name" type="text" class="form-control">
 
                         <div class="form-row">
                             <label for="card-element">Credit or debit card</label>
-                            <div id="card-element" class="form-control">
+                            <div id="card-element"  class="form-control">
                             </div>
                             <!-- Used to display form errors. -->
                             <div id="card-errors" role="alert"></div>
@@ -71,12 +68,14 @@
                             <button  id="card-button" data-secret="{{ $intent->client_secret }}" class="btn btn-lg btn-success btn-block">Process Subscription</button>
                         </div>
                     </form>
-
-
                 </div>
             </div>
         </div>
     </div>
+</div>
+<br><br>
+<div class="form-group text-center">
+   <a href="{{route('subscriptions.all')}}" ><button  id="card-button"   class="btn btn-lg btn-success btn-block">Check Your  Subscriptions<a></button>
 </div>
 @endsection
 
