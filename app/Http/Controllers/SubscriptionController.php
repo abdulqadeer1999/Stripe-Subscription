@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Laravel\Cashier\Subscription;
 use Stripe\Plan;
 use App\Models\User;
+use App\Http\Controllers\Stripe;
 class SubscriptionController extends Controller
 {
     public function showPlanForm()
@@ -72,14 +73,20 @@ class SubscriptionController extends Controller
     }
     public function processPlan(Request $request)
     {
+
         $user = auth()->user();
         $user->createOrGetStripeCustomer();
         $paymentMethod = null;
         $paymentMethod = $request->payment_method;
+
         if($paymentMethod != null){
             $paymentMethod = $user->addPaymentMethod($paymentMethod);
         }
         $plan = $request->plan_id;
+        // return $plan;
+
+        // dd($user);
+
 
         try {
             $user->newSubscription(
@@ -93,11 +100,14 @@ class SubscriptionController extends Controller
             ]);
         }
 
+
         // $request->session()->flash('alert-success', 'You are subscribed to this plan');
         return redirect()->route('plans.checkout', $plan)->with('subscribe','You have Successfully Subscribed');
     }
     public function allSubscriptions()
     {
+
+        // return view('stripe.plans', compact( 'basic', 'professional', 'enterprise'));
         if (auth()->user()->onTrial('default')) {
             dd('trial');
         }
@@ -132,11 +142,71 @@ class SubscriptionController extends Controller
         return view('stripe.updateplan',compact('basic','professional','enterprise'));
     }
 
-        // public function updateplan(Request $request){
+        public function updateplan(Request $request,$planId){
 
-        //     $user = auth()->user();
-        //     $sub =  $user->subscription('default')->swap('plan_M9JGmfXUu8R1f9');
-        //     return $sub;
+            // $stripe = new \Stripe\StripeClient(
+            //     'sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl'
+            //   );
+              \Stripe\Stripe::setApiKey('sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl');
 
-        // }
+            //   $stripe = Subscription::where('user_id', auth()->id())->first();
+            //   return $stripe;
+            $plan  = Subscription::where('user_id', auth()->id())->first();
+            return $plan;
+            $stripe = ModelsPlan::where('plan_id', $planId)->first();
+            // $subscriptionName = $request->subscriptionName;
+            // return $stripe;
+            $subscription = \Stripe\Subscription::retrieve($plan->stripe_id);
+            return $subscription;
+            // $paymentMethod = $request->payment_method;
+
+            $charge = \Stripe\Subscription::update($stripe->plan_id, [
+                'cancel_at_period_end' => false,
+                'proration_behavior' => 'create_prorations',
+                'billing_cycle_anchor' => 'unchanged',
+                'items' => [
+
+                    [
+                        'id' => $subscription->items->data[0]->id,
+                        'price' =>   $subscription->items->data[0]->price->id,
+                    ],
+                ],
+            ]);
+            // return $charge;
+            // return $subscription;
+            // $stripe = ModelsPlan::where('plan_id', $planId)->first();
+            // return $stripe;
+            //     $stripe->subscriptions::updateupdate(
+            //     $stripe->plan_id,
+            //     ['metadata' => ['order_id' =>  $stripe->id]]
+            // );
+
+            //   return $stripe->subscriptions;
+            //   $stripe->subscriptions->update(
+            //     'sub_1Lkv1UEzIQiMqj2YD2ktKnpm',
+            //     ['metadata' => ['order_id' => '6735']]
+            //   );
+
+        }
+
+        public function refundSubscriptions(Request $request){
+            $stripe = new \Stripe\StripeClient('sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl');
+
+            $package_value = $stripe->charges->all();
+            // $package_value = $stripe->charges->all(['limit' => 5]);
+            // return $package_value;
+            // return $package_value->data[0]->amount;
+             $stripe->refunds->create(['charge' => $package_value->data[0]->id, 'amount' => $package_value->data[0]->amount]);
+
+
+        }
+
+        public function refunds(){
+            $stripe = new \Stripe\StripeClient(
+                'sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl'
+            );
+              $allrefunds =  $stripe->refunds->all();
+              return $allrefunds->data;
+        }
+
 }

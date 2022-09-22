@@ -101,14 +101,15 @@ input:checked + .slider:before {
                             <th scope="col">Quantity</th>
                             <th scope="col">Subscription Start At</th>
                             <th>Auto Renew</th>
+                            <th>Refund</th>
                           </tr>
                         </thead>
                         <tbody>
                             @foreach ($subscriptions as $subscription)
                                 <tr>
-                                    <td>{{ $subscription->plan->name }}</td>
+                                    <td>{{ $subscription->plan->name ?? '' }}</td>
                                     {{-- <td>{{ $subscription->name }}</td> --}}
-                                    <td>{{ $subscription->plan->price }}</td>
+                                    <td>{{ $subscription->plan->price ?? '' }}</td>
                                     <td>{{ $subscription->quantity }}</td>
                                     <td>{{ $subscription->created_at }}</td>
                                     <td>
@@ -121,9 +122,19 @@ input:checked + .slider:before {
 
                                             <span class="slider round"></span>
                                         </label>
+
+
+
                                     </td>
+                                <td>
+                                    <label class="switch">
+                                        <input type="checkbox" id="refund" value="{{ $subscription->name }}">
+                                        <span class="slider round"></span>
+                                      </label>
+                                </td>
                                 </tr>
                             @endforeach
+
                         </tbody>
                     </table>
                     @else
@@ -134,6 +145,9 @@ input:checked + .slider:before {
         </div>
     </div>
 </div>
+<div class="form-group text-center">
+    <a href="{{route('update-plan')}}" ><button  id="card-button"   class="btn btn-lg btn-success btn-block" style="text-decoration: none" >Update Plan<a></button>
+ </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.all.min.js"></script>
 
 @endsection
@@ -185,6 +199,57 @@ input:checked + .slider:before {
             }
         });
     });
+
+
+     $('#refund').on('click',function() {
+            // alert('test');
+            var subscriptionName = $('#refund').val();
+            // alert(subscriptionName);
+            if($(this).is(':checked')){
+                $.ajax({
+                    url:'{{ route("subscriptions.refund") }}',
+                    data: { subscriptionName },
+                    type:"GET",
+                    success:function( response )
+                    {
+                        Swal.fire(
+                            'Subscription!',
+                            'You have Successfully Refund Payments!',
+                            'success'
+                            )
+                    },
+                    error: function(response)
+
+                    {
+                        // console.log(response);
+                        Swal.fire(
+                             'Subscription!',
+                             'Charge has already been refunded!',
+                             'info'
+                            )
+                    }
+                });
+            }
+            // else {
+            //     $.ajax({
+            //         url:'{{ route("subscriptions.cancel") }}',
+            //         data: { subscriptionName },
+            //         type:"GET",
+            //         success:function( response )
+            //         {
+            //             Swal.fire(
+            //                 'Subscription!',
+            //                 'You have Successfully Cancelled Subscription!',
+            //                 'success'
+            //                 )
+            //             // console.log(response)
+            //         },
+            //         error: function(response)
+            //         {
+            //         }
+            //     });
+            // }
+        });
 </script>
 @endsection
 
