@@ -219,14 +219,13 @@ input:checked + .slider:before {
                             )
                     },
                     error: function(response)
-
                     {
                         // console.log(response);
                         Swal.fire(
                              'Subscription!',
                              'Charge has already been refunded!',
                              'info'
-                            )
+                        )
                     }
                 });
             }

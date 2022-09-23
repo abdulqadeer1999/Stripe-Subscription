@@ -148,35 +148,53 @@ class SubscriptionController extends Controller
             //     'sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl'
             //   );
               \Stripe\Stripe::setApiKey('sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl');
-
-            //   $stripe = Subscription::where('user_id', auth()->id())->first();
-            //   return $stripe;
-            $plan  = Subscription::where('user_id', auth()->id())->first();
-            return $plan;
-            $stripe = ModelsPlan::where('plan_id', $planId)->first();
-            // $subscriptionName = $request->subscriptionName;
-            // return $stripe;
-            $subscription = \Stripe\Subscription::retrieve($plan->stripe_id);
-            return $subscription;
-            // $paymentMethod = $request->payment_method;
-
-            $charge = \Stripe\Subscription::update($stripe->plan_id, [
+              $subscription = \Stripe\Subscription::retrieve('sub_1Lkw5AEzIQiMqj2YA8b2imR5');
+              \Stripe\Subscription::update('sub_1Lkw5AEzIQiMqj2YA8b2imR5', [
                 'cancel_at_period_end' => false,
                 'proration_behavior' => 'create_prorations',
-                'billing_cycle_anchor' => 'unchanged',
                 'items' => [
-
-                    [
-                        'id' => $subscription->items->data[0]->id,
-                        'price' =>   $subscription->items->data[0]->price->id,
-                    ],
+                  [
+                    'id' => $subscription->items->data[0]->id,
+                    'price' => 'plan_M9JJF2EcBfxdWK',
+                  ],
                 ],
-            ]);
-            // return $charge;
+              ]);
+            // $subscription  = Subscription::where('user_id', auth()->id())->first();
             // return $subscription;
             // $stripe = ModelsPlan::where('plan_id', $planId)->first();
             // return $stripe;
-            //     $stripe->subscriptions::updateupdate(
+            // $subscription = \Stripe\Subscription::retrieve($subscription->stripe_id);
+            // return $subscription;
+            // $paymentMethod = $request->payment_method;
+
+            //  \Stripe\Subscription::update($subscription->id, [
+            //     'cancel_at_period_end' => false,
+            //     'proration_behavior' => 'create_prorations',
+            //     'billing_cycle_anchor' => 'unchanged',
+            //     'items' => [
+
+            //         [
+            //             'id' => $subscription->items->data[0]->id,
+            //             'price' =>   $subscription->items->data[0]->price->id,
+            //         ],
+            //     ],
+            // ]);
+
+            // $subscription = \Stripe\Subscription::retrieve($subscription->stripe_id);
+            //     \Stripe\Subscription::update($subscription->stripe_id, [
+            //     'cancel_at_period_end' => false,
+            //     'proration_behavior' => 'create_prorations',
+            //     'items' => [
+            //         [
+            //         'id' => $subscription->items->data[0]->id,
+            //         'price' => 'price_CBb6IXqvTLXp3f',
+            //         ],
+            //     ],
+            // ]);
+            // return $charge;
+            // return $subscription;
+            // $stripe = ModelsPlan::where('plan_id', $planId)->first();
+            //     $stripe->subscriptions->update(
             //     $stripe->plan_id,
             //     ['metadata' => ['order_id' =>  $stripe->id]]
             // );
@@ -189,6 +207,8 @@ class SubscriptionController extends Controller
 
         }
 
+
+        // refund amount function
         public function refundSubscriptions(Request $request){
             $stripe = new \Stripe\StripeClient('sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl');
 
@@ -201,12 +221,15 @@ class SubscriptionController extends Controller
 
         }
 
+
+
+            // get all refunded users data
         public function refunds(){
             $stripe = new \Stripe\StripeClient(
                 'sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl'
             );
               $allrefunds =  $stripe->refunds->all();
-              return $allrefunds->data;
+              return $allrefunds;
         }
 
 }
