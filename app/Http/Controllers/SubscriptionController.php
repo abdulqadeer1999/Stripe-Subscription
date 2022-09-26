@@ -143,26 +143,33 @@ class SubscriptionController extends Controller
         $enterprise = ModelsPlan::where('name', 'premium')->first();
         return view('stripe.updateplan',compact('basic','professional','enterprise'));
     }
+        //Upgrade or downgrade subscription function
 
         public function updateplan(Request $request,$planId){
 
             \Stripe\Stripe::setApiKey('sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl');
             $user = Subscription::where('user_id',Auth::id())->first();
 
-
             $subscription = \Stripe\Subscription::retrieve($user->stripe_id);
             // return $subscription;
             $updateplan = $request->planId;
             \Stripe\Subscription::update($user->stripe_id, [
               'cancel_at_period_end' => false,
-              'proration_behavior' => 'create_prorations',
+              'proration_behavior' => 'create_prorations', // Prorating is the default behavior, but you can disable it by setting proration_behavior to none:
               'items' => [
                 [
+
                   'id' => $subscription->items->data[0]->id,
                   'price' =>   $updateplan,
                 ],
               ],
             ]);
+
+            // $user->update([
+            //     'user_id' => Auth::id(),
+            //     'stripe_id' => $subscription->items->data[0]->id,
+            //      'stripe_price' => $updateplan,
+            // ]);
 
             return redirect()->route('subscriptions.all')->with('updated','Subscription Updated Successfully');
 
@@ -202,12 +209,6 @@ class SubscriptionController extends Controller
               \Stripe\Stripe::setApiKey('sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl');
               $user = User::where('id',Auth::id())->first();
               $user->subscription('default')->cancel();
-            //   $sub =  \Stripe\Subscription::retrieve('plan_M9JJF2EcBfxdWK');
-            //  $sub->cancel();
-            // $stripe->subscriptions->cancel(
-            //     'cus_MUHBsj6yFUgBzl',
-            //     []
-            //   );
 
         }
 }
