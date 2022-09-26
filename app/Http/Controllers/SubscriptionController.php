@@ -9,6 +9,8 @@ use Laravel\Cashier\Subscription;
 use Stripe\Plan;
 use App\Models\User;
 use App\Http\Controllers\Stripe;
+use Illuminate\Support\Facades\Auth;
+
 class SubscriptionController extends Controller
 {
     public function showPlanForm()
@@ -144,66 +146,25 @@ class SubscriptionController extends Controller
 
         public function updateplan(Request $request,$planId){
 
-            // $stripe = new \Stripe\StripeClient(
-            //     'sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl'
-            //   );
-              \Stripe\Stripe::setApiKey('sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl');
-              $subscription = \Stripe\Subscription::retrieve('sub_1Lkw5AEzIQiMqj2YA8b2imR5');
-              \Stripe\Subscription::update('sub_1Lkw5AEzIQiMqj2YA8b2imR5', [
-                'cancel_at_period_end' => false,
-                'proration_behavior' => 'create_prorations',
-                'items' => [
-                  [
-                    'id' => $subscription->items->data[0]->id,
-                    'price' => 'plan_M9JJF2EcBfxdWK',
-                  ],
+            \Stripe\Stripe::setApiKey('sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl');
+            $user = Subscription::where('user_id',Auth::id())->first();
+
+
+            $subscription = \Stripe\Subscription::retrieve($user->stripe_id);
+            // return $subscription;
+            $updateplan = $request->planId;
+            \Stripe\Subscription::update($user->stripe_id, [
+              'cancel_at_period_end' => false,
+              'proration_behavior' => 'create_prorations',
+              'items' => [
+                [
+                  'id' => $subscription->items->data[0]->id,
+                  'price' =>   $updateplan,
                 ],
-              ]);
-            // $subscription  = Subscription::where('user_id', auth()->id())->first();
-            // return $subscription;
-            // $stripe = ModelsPlan::where('plan_id', $planId)->first();
-            // return $stripe;
-            // $subscription = \Stripe\Subscription::retrieve($subscription->stripe_id);
-            // return $subscription;
-            // $paymentMethod = $request->payment_method;
+              ],
+            ]);
 
-            //  \Stripe\Subscription::update($subscription->id, [
-            //     'cancel_at_period_end' => false,
-            //     'proration_behavior' => 'create_prorations',
-            //     'billing_cycle_anchor' => 'unchanged',
-            //     'items' => [
-
-            //         [
-            //             'id' => $subscription->items->data[0]->id,
-            //             'price' =>   $subscription->items->data[0]->price->id,
-            //         ],
-            //     ],
-            // ]);
-
-            // $subscription = \Stripe\Subscription::retrieve($subscription->stripe_id);
-            //     \Stripe\Subscription::update($subscription->stripe_id, [
-            //     'cancel_at_period_end' => false,
-            //     'proration_behavior' => 'create_prorations',
-            //     'items' => [
-            //         [
-            //         'id' => $subscription->items->data[0]->id,
-            //         'price' => 'price_CBb6IXqvTLXp3f',
-            //         ],
-            //     ],
-            // ]);
-            // return $charge;
-            // return $subscription;
-            // $stripe = ModelsPlan::where('plan_id', $planId)->first();
-            //     $stripe->subscriptions->update(
-            //     $stripe->plan_id,
-            //     ['metadata' => ['order_id' =>  $stripe->id]]
-            // );
-
-            //   return $stripe->subscriptions;
-            //   $stripe->subscriptions->update(
-            //     'sub_1Lkv1UEzIQiMqj2YD2ktKnpm',
-            //     ['metadata' => ['order_id' => '6735']]
-            //   );
+            return redirect()->route('subscriptions.all')->with('updated','Subscription Updated Successfully');
 
         }
 
@@ -232,4 +193,21 @@ class SubscriptionController extends Controller
               return $allrefunds;
         }
 
+
+        public function cancelSubs(Request $request){
+            // dd($request->all());
+            $stripe = new \Stripe\StripeClient(
+                'sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl'
+              );
+              \Stripe\Stripe::setApiKey('sk_test_51LGnnGEzIQiMqj2YZsToYh6xtyZC8UDdhzxDqYjGuyLVoqT5BtSfippdeVGxayPUYprQgL9Keh6Vv62ZaOn7gYap00ngrgzdVl');
+              $user = User::where('id',Auth::id())->first();
+              $user->subscription('default')->cancel();
+            //   $sub =  \Stripe\Subscription::retrieve('plan_M9JJF2EcBfxdWK');
+            //  $sub->cancel();
+            // $stripe->subscriptions->cancel(
+            //     'cus_MUHBsj6yFUgBzl',
+            //     []
+            //   );
+
+        }
 }

@@ -42,4 +42,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    function get_price(){
+        return $this->belongsTo(Subscription::class,'price');
+    }
 }

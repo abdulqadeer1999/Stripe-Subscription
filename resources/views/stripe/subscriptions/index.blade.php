@@ -76,6 +76,10 @@ input:checked + .slider:before {
 <script type="text/javascript">
     swal("Subscription!", "{{ Session::get('resume') }}", "success");
 </script>
+@elseif (Session::has('updated'))
+<script type="text/javascript">
+    swal("Subscription!", "{{ Session::get('updated') }}", "success");
+</script>
 @endif
 <div class="container">
     <div class="row justify-content-center">
@@ -102,6 +106,7 @@ input:checked + .slider:before {
                             <th scope="col">Subscription Start At</th>
                             <th>Auto Renew</th>
                             <th>Refund</th>
+                            <th>Cancel Subscription</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -132,6 +137,8 @@ input:checked + .slider:before {
                                         <span class="slider round"></span>
                                       </label>
                                 </td>
+
+                                        <td> <button type="submit" value="{{ $subscription->name }}" class="btn btn-primary"  id="cancel">Cancel</button></td>
                                 </tr>
                             @endforeach
 
@@ -248,6 +255,34 @@ input:checked + .slider:before {
             //         }
             //     });
             // }
+        });
+
+        $('#cancel').on('click',function() {
+            alert('test');
+            var subscriptionName = $('#cancel').val();
+            // alert(subscriptionName);
+                $.ajax({
+                    url:'{{ route("cancel") }}',
+                    data: { subscriptionName },
+                    type:"GET",
+                    success:function( response )
+                    {
+                        Swal.fire(
+                            'Subscription!',
+                            'You have Successfully Cancelled Subscription!',
+                            'success'
+                            )
+                    },
+                    error: function(response)
+                    {
+                        // console.log(response);
+                        Swal.fire(
+                             'Subscription!',
+                             'Charge has already been refunded!',
+                             'info'
+                        )
+                    }
+                });
         });
 </script>
 @endsection

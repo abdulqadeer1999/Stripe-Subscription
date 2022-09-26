@@ -43,3 +43,5 @@ Route::get('upgrade-plan/{planId}',[SubscriptionController::class,'updateplan'])
 Route::get('subscriptions/refund', [SubscriptionController::class, 'refundSubscriptions'])->name('subscriptions.refund');
 
 Route::get('allrefunds',[SubscriptionController::class,'refunds'])->name('allrefunds');
+
+Route::get('/cancel',[SubscriptionController::class,'cancelSubs'])->name('cancel');
