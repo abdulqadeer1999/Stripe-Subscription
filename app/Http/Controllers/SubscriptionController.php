@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 
 class SubscriptionController extends Controller
 {
+
+
     public function showPlanForm()
     {
         return view('stripe.plans.create');
@@ -185,7 +187,6 @@ class SubscriptionController extends Controller
             // return $package_value;
             // return $package_value->data[0]->amount;
              $stripe->refunds->create(['charge' => $package_value->data[0]->id, 'amount' => $package_value->data[0]->amount]);
-
 
         }
 

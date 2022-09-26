@@ -146,6 +146,7 @@ input:checked + .slider:before {
                     </table>
                     @else
                     <h4>You are not subscribed to any plan</h4>
+
                     @endif
                 </div>
             </div>
@@ -153,7 +154,7 @@ input:checked + .slider:before {
     </div>
 </div>
 <div class="form-group text-center">
-    <a href="{{route('update-plan')}}" ><button  id="card-button"   class="btn btn-lg btn-success btn-block" style="text-decoration: none" >Update Plan<a></button>
+    <a href="{{route('update-plan')}}" ><button  id="card-button"   class="btn btn-lg btn-success btn-block" style="text-decoration: none;margin: 26px" >Update Plan<a></button>
  </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.all.min.js"></script>
 
@@ -258,7 +259,7 @@ input:checked + .slider:before {
         });
 
         $('#cancel').on('click',function() {
-            alert('test');
+            // alert('test');
             var subscriptionName = $('#cancel').val();
             // alert(subscriptionName);
                 $.ajax({
